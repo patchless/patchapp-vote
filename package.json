@@ -13,6 +13,7 @@
     "pull-more": "^1.0.0",
     "pull-paramap": "^1.2.2",
     "pull-stream": "^3.6.1",
+    "qs": "^6.5.1",
     "ssb-ref": "^2.9.1"
   },
   "devDependencies": {},
