@@ -8,12 +8,12 @@
     "url": "git://github.com/dominictarr/patchapp-vote.git"
   },
   "dependencies": {
+    "pull-paramap": "^1.2.2"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
   },
   "author": "'Dominic Tarr' <dominic.tarr@gmail.com> (dominictarr.com)",
-  "license": "MIT"  
+  "license": "MIT"
 }
