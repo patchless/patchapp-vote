@@ -16,9 +16,10 @@ exports.create = function (api) {
       var expression = 'yup'
       var y =  h('a', expression, { href:"#", onclick: function (ev) {
         api.confirm.show({
-          type: 'vote', vote: {
+         type: 'vote', vote: {
             link: msg.key, value: 1, expression: 'yup'
-          }
+          },
+          recps: msg.value.content.recps
         }, null, function () {})
       }})
       var c = 0
@@ -42,4 +43,6 @@ exports.create = function (api) {
     }
   }}
 }
+
+
 
