@@ -19,6 +19,7 @@ exports.create = function (api) {
          type: 'vote', vote: {
             link: msg.key, value: 1, expression: 'yup'
           },
+          channel: msg.value.content.channel,
           recps: msg.value.content.recps
         }, null, function () {})
       }})
