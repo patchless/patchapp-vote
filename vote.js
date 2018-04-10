@@ -14,6 +14,19 @@ exports.create = function (api) {
   return { message: {
     action: function (msg, context) {
       var expression = 'yup'
+      function setState () {
+        var c = 0
+        pull(
+          api.sbot.links({dest: msg.key, rel: 'vote'}),
+          pull.drain(function (e) {
+            api.sbot.names.getSignifier(e.source, function (err, name) {
+              if(name) y.title += name + '\n'
+            })
+            c ++
+            y.textContent = c+' '+expression
+          })
+        )
+      }
       var y =  h('a', expression, { href:"#", onclick: function (ev) {
         api.confirm.show({
          type: 'vote', vote: {
@@ -21,19 +34,9 @@ exports.create = function (api) {
           },
           channel: msg.value.content.channel,
           recps: msg.value.content.recps
-        }, null, function () {})
+        }, null, setState)
       }})
-      var c = 0
-      pull(
-        api.sbot.links({dest: msg.key, rel: 'vote'}),
-        pull.drain(function (e) {
-          api.sbot.names.getSignifier(e.source, function (err, name) {
-            if(name) y.title += name + '\n'
-          })
-          c ++
-          y.textContent = c+' '+expression
-        })
-      )
+      setState()
       return y
     },
     render: function (msg) {
@@ -44,6 +47,4 @@ exports.create = function (api) {
     }
   }}
 }
-
-
 
