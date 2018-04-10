@@ -10,6 +10,7 @@
   "dependencies": {
     "hyperloadmore": "^1.1.0",
     "hyperscript": "^2.0.2",
+    "mfr-query-stream": "^2.0.0",
     "pull-more": "^1.0.0",
     "pull-paramap": "^1.2.2",
     "pull-stream": "^3.6.1",

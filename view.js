@@ -4,13 +4,11 @@ var qs = require('qs')
 var isMsg = require('ssb-ref').isMsg
 var h = require('hyperscript')
 
-var More = require('pull-more')
-var HyperMoreStream = require('hyperloadmore/stream')
+var QueryStream = require('mfr-query-stream')
 
 exports.needs = {
   sbot: {
-    createUserStream: 'first',
-    createLogStream: 'first',
+    query: { read: 'first' },
     get: 'first'
   },
   message: {
@@ -31,40 +29,26 @@ exports.create = function (api) {
   return {app: {view: function (src) {
     if(!/^votes/.test(src)) return
     var opts = qs.parse(src.substring(6))
-    var id = opts.id
-    var content = h('div.content')
-
-    function createStream (opts) {
-      return pull(
-        (id
-          ? More(api.sbot.createUserStream, opts, ['value', 'sequence'])
-          : More(api.sbot.createLogStream, opts)
-        ),
-        pull.filter(function (data) {
-          return data.value.content.type == 'vote'
-        }),
-        paramap(function (data, cb) {
-          var key = data.value.content.vote.link
-          api.sbot.get(key, function (err, value) {
-            cb(null, {key:key, value: value})
-          })
-        }),
-        pull.map(api.message.layout)
-      )
-    }
-
-    pull(
-      createStream({old: false, limit: 100, id: id}),
-      HyperMoreStream.top(content)
+    return QueryStream(
+      api.sbot.query.read,
+      [{$filter: {value: {
+        private: {$is: 'undefined'},
+        content: {type: 'vote'},
+        author: opts.id
+      }}}],
+      function () {
+        return pull(
+          paramap(function (data, cb) {
+            var key = data.value.content.vote.link
+            api.sbot.get(key, function (err, value) {
+              cb(null, {key:key, value: value})
+            })
+          }),
+          pull.map(api.message.layout)
+        )
+      },
+      h('div.content')
     )
-
-    pull(
-      createStream({reverse: true, live: false, limit: 100, id: id}),
-      HyperMoreStream.bottom(content)
-    )
-
-    return content
-
   }},
   avatar: {
     action: function (id) {
