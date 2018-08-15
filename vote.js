@@ -19,23 +19,38 @@ exports.create = function (api) {
         pull(
           api.sbot.links({dest: msg.key, rel: 'vote'}),
           pull.drain(function (e) {
-            api.sbot.names.getSignifier(e.source, function (err, name) {
-              if(name) y.title += name + '\n'
-            })
             c ++
             y.textContent = c+' '+expression
           })
         )
       }
-      var y =  h('a', expression, { href:"#", onclick: function (ev) {
-        api.confirm.show({
-         type: 'vote', vote: {
-            link: msg.key, value: 1, expression: 'yup'
-          },
-          channel: msg.value.content.channel,
-          recps: msg.value.content.recps
-        }, null, setState)
-      }})
+      var y =  h('a', expression, {
+        href:"#",
+        onclick: function (ev) {
+          api.confirm.show({
+           type: 'vote', vote: {
+              link: msg.key, value: 1, expression: 'yup'
+            },
+            channel: msg.value.content.channel,
+            recps: msg.value.content.recps
+          }, null, setState)
+        },
+        onmouseover: function () {
+          var c = 0
+          y.title = ''
+          pull(
+            api.sbot.links({dest: msg.key, rel: 'vote'}),
+            pull.drain(function (e) {
+              api.sbot.names.getSignifier(e.source, function (err, name) {
+                if(name) y.title += name + '\n'
+              })
+              c ++
+              y.textContent = c+' '+expression
+            })
+          )
+
+        }
+      })
       setState()
       return y
     },
@@ -47,4 +62,7 @@ exports.create = function (api) {
     }
   }}
 }
+
+
+
 
